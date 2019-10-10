@@ -1,0 +1,13 @@
+felix
+.idea
+test*
+*.exe
+release
+_book
+_release
+.vscode
+dist
+_nes
+vendor
+config.toml
+model/setup.go

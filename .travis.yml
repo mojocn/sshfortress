@@ -1,0 +1,35 @@
+language: go
+os:
+  - linux
+  - osx
+services:
+  - redis
+  - mysql
+
+matrix:
+  fast_finish: true
+  include:
+    - go: 1.12.x
+      env: CGO_ENABLED=0 GO111MODULE=on
+    - go: 1.x
+      env: CGO_ENABLED=0 GO111MODULE=on
+
+git:
+  depth: 1
+
+
+before_install:
+  - go version
+  - go get -v -t ./...
+script:
+  - diff -u <(echo -n) <(gofmt -d .)
+  - pwd
+  - ls -al
+  - go build
+  - ./felix -h
+
+notifications:
+  email:
+    recipients:
+      - neochau@gmail.com
+    on_success: never
