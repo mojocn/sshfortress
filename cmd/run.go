@@ -65,6 +65,13 @@ func runApiAndH5() error {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	r := gin.New()
+
+	//开发接口
+	{
+		//chromedp run screen shot
+		r.GET("open/chromedp/shot", handler.ChromedpShot)
+	}
+
 	r.GET("metrics", gin.WrapH(promhttp.Handler()))
 	r.MaxMultipartMemory = 1024 * 1024 * 50 //100M 上传文件路径 todo::配置文件中进行配置
 	//sever static file in http's root path
