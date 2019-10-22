@@ -9,9 +9,7 @@
 4. Easily login into your private Cluster by SSH Proxy provided by SSH-Fortress-Proxy
 
 
-
-- 普通账号: 直接点击登陆
-
+- 普通账号: 直接点击登陆(请输入验证码)
 
 
 ## 2.功能规划(一下功能都可以实现)
@@ -73,7 +71,6 @@ fixed:修改不能修改/etc/sudoers 文件,permission 权限不够的问题
 - 编写配置文件到任意一个位置  `/etc/sshfortress/config.toml` ,`$HOME/.sshfortress`,`${app可执行文件目录}/config.toml`
 - `cd #{编译好的目录}` 运行 `./sshfortress run`.  不需要关系前端代码. 前端编译之后代码已经包含再编译之后的二进制文件中.
 
-
 ### superviosr 进程守护
 `/etc/supervisord/sshfortress.ini`
 
@@ -90,8 +87,6 @@ numprocs=1
 redirect_stderr=true
 stdout_logfile=/home/zhouqing1/sshfortress/sp.log
 ```
-
-
 
 ## 怎么解决私有云集群访问的问题
 私有云里面一台机器设置对sshfortress堡垒机可以访问的代理,这台机器代号SshProxyServer
