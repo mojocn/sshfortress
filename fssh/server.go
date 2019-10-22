@@ -3,7 +3,6 @@ package fssh
 import (
 	"fmt"
 	"github.com/gliderlabs/ssh"
-	"github.com/sirupsen/logrus"
 	gossh "golang.org/x/crypto/ssh"
 	"io"
 	"io/ioutil"
@@ -11,109 +10,103 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sshfortress/model"
 	"sshfortress/util"
 )
 
-var hostKeySigner gossh.Signer
-
-func loadKnowKeys() {
-	s, err := createOrLoadKeySigner()
+func Run() {
+	hostKeySigner, err := createOrLoadKeySigner()
 	if err != nil {
 		log.Fatal(err)
 	}
-	hostKeySigner = s
-}
-
-func Run() {
-	loadKnowKeys()
 	s := &ssh.Server{
-		Addr:            ":88",
-		Handler:         helloHandler,
-		PasswordHandler: passwordH,
+		Addr:    ":88",
+		Handler: homeHandler, //
+		//PasswordHandler: passwordHandler,   不需要密码验证
 	}
 	s.AddHostKey(hostKeySigner)
 	log.Fatal(s.ListenAndServe())
-
 }
 
-func passwordH(ctx ssh.Context, password string) bool {
-	user := ctx.User()
-	return model.FsshUserAuth(user, password)
+func passwordHandler(ctx ssh.Context, password string) bool {
+	//check password and username
+	//user := ctx.User()
+	// 可以结合DB数据库定义用户验证用户登陆
+	return true
+	//return model.FsshUserAuth(user, password)
 }
 
-func helloHandler(s ssh.Session) {
-	io.WriteString(s, fmt.Sprintf("mojotv.cn sshfortress堡垒机 自定义SSH 服务 %s\n", s.User()))
+func homeHandler(s ssh.Session) {
+	//tty 控制码打印彩色文字
+	//mojotv.cn/tutorial/golang-term-tty-pty-vt100
+	io.WriteString(s, fmt.Sprintf("\x1b[31;47mmojotv.cn sshfortress 堡垒机 自定义SSH, 当前登陆用户名: %s\x1b[0m\n", s.User()))
 
 	ptyReq, winCh, isPty := s.Pty()
 	if !isPty {
 		io.WriteString(s, "不是PTY请求.\n")
 		s.Exit(1)
-	}
-	sshConf, err := util.NewSshClientConfig("pi", "", "password", "", "")
-	if err != nil {
-		io.WriteString(s, err.Error())
 		return
 	}
-	// Connect to ssh server
+	sshConf, err := util.NewSshClientConfig("test007", "test007", "password", "", "")
+	if err != nil {
+		io.WriteString(s, err.Error())
+		s.Exit(1)
+		return
+	}
+	//连接远程服务器SSH
 	conn, err := gossh.Dial("tcp", "home.mojotv.cn:22", sshConf)
 	if err != nil {
-		log.Fatal("unable to connect: ", err)
+		io.WriteString(s, "unable to connect: "+err.Error())
+		s.Exit(1)
+		return
 	}
 	defer conn.Close()
-	// Create a fss
+	// 创建远程ssh session
 	fss, err := conn.NewSession()
 	if err != nil {
-		log.Fatal("unable to create fss: ", err)
+		io.WriteString(s, "unable to create fss: "+err.Error())
+		s.Exit(1)
+		return
 	}
 	defer fss.Close()
-	// Set up terminal modes
+
+	// 配置terminal
 	modes := gossh.TerminalModes{
 		gossh.ECHO:          1,     // disable echoing
 		gossh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
 		gossh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
 	}
-	// Request pseudo terminal
+	// 请求为终端
 	if err := fss.RequestPty(ptyReq.Term, ptyReq.Window.Height, ptyReq.Window.Width, modes); err != nil {
-		log.Fatal("request for pseudo terminal failed: ", err)
+		io.WriteString(s, "request for pseudo terminal failed: "+err.Error())
+		s.Exit(1)
+		return
 	}
+	//监听终端size window 变化
 	go func() {
 		for win := range winCh {
 			err := fss.WindowChange(win.Height, win.Width)
 			if err != nil {
-				logrus.WithError(err).Error("windows size changed")
+				io.WriteString(s, "windows size changed: "+err.Error())
+				s.Exit(1)
+				return
 			}
 		}
 	}()
-	//stdinP, err := fss.StdinPipe()
-	//if err != nil {
-	//	logrus.WithError(err).Error("stdin Pipe")
-	//	return
-	//}
-	//stdoutP, err := fss.StdoutPipe()
-	//if err != nil {
-	//	logrus.WithError(err).Error("stdot Pipe")
-	//	return
-	//}
-	//stderrP, err := fss.StderrPipe()
-	//if err != nil {
-	//	logrus.WithError(err).Error("stderr Pipe")
-	//	return
-	//}
-	//
-	//go io.Copy(s,stderrP)
-	//go io.Copy(s,stdoutP)
-	//go io.Copy(stdinP, s) // stdin
-	// Start remote shell
+
+	//linux 一切接文件 io, 连接stdin stdout stderr
+	//连接为终端到server
 	fss.Stderr = s
 	fss.Stdin = s
 	fss.Stdout = s
 	if err := fss.Shell(); err != nil {
-		log.Fatal("failed to start shell: ", err)
+		io.WriteString(s, "failed to start shell: "+err.Error())
+		s.Exit(1)
+		return
 	}
 	fss.Wait()
 }
 
+//创建key 来验证 host public
 func createOrLoadKeySigner() (gossh.Signer, error) {
 	keyPath := filepath.Join(os.TempDir(), "fssh.rsa")
 	if _, err := os.Stat(keyPath); os.IsNotExist(err) {

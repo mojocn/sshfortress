@@ -19,6 +19,8 @@ echo "run the app with Mysql database, you need a config.toml file in your sshfo
 ./sshfortress run -v --listen=':3333'
 
 ```
+Docker pull `docker pull mojotvcn/sshfortress`
+
 ### 2.1 config.toml
 The config.toml file should in sshfortress binary folder.  config.toml works with command `sshfortress run`. Command `sshfortress sqlite` can run with the config file.
 
@@ -60,7 +62,7 @@ just click the login button, the default password has input for you, user `admin
 ## 4. Run With supervisor & nginx
 
 sshfortress.mojotv.cn.conf
-```editorconfig
+```bash
 server {
         server_name sshfortress.mojotv.cn;
         charset utf-8;
@@ -97,7 +99,7 @@ server {
 }
 ```
 
-sshfortress.ini
+Supervisor config file: `sshfortress.ini`
 ```ini
 [program:sshfortress.mojotv.cn]
 command=/data/sshfortress/bin/sshfortress sqlite
@@ -115,3 +117,4 @@ stdout_logfile=/data/sshfortress/supervisor.log
 
 1. [idea from my another repo: libragen/felix](https://github.com/libragen/felix)
 2. [How to run SSH-Terminal in browser](https://mojotv.cn/2019/05/27/xtermjs-go)
+3. [Dockerhub image](https://hub.docker.com/r/mojotvcn/sshfortress/dockerfile)
