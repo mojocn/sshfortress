@@ -90,8 +90,8 @@ func (m *Machine) Create() (err error) {
 
 //Delete
 func (m *Machine) Delete(u *User) (err error) {
-	if m.Id < 1 {
-		return errors.New("id必须大于0")
+	if m.Id < 2 {
+		return errors.New("id必须大于2")
 	}
 	//删除用户与机器的关联
 	err = db.Where("machine_id = ?", m.Id).Delete(MachineUser{}).Error

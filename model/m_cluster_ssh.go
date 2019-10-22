@@ -104,8 +104,11 @@ func (m *ClusterSsh) Create() (err error) {
 
 //Delete
 func (m *ClusterSsh) Delete() (err error) {
-	if m.Id < 1 {
-		return errors.New("id必须大于0")
+	if m.Id < 2 {
+		return errors.New("id must be larger than 1")
+	}
+	if db.Model(Machine{}).Where("cluster_ssh_id = ?", m.Id).RowsAffected > 1 {
+		return errors.New("cluster ssh account has been assigned, detach it from machine first")
 	}
 	return crudDelete(m)
 }
