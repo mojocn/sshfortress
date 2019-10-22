@@ -15,7 +15,7 @@ func RunMigrate() error {
 	}
 
 	god := User{
-		RealName:         "超级管理",
+		RealName:         "SuperAdmin",
 		Email:            "admin@sshfortress.cn",
 		InputPassword:    "admin",
 		Mobile:           "13312345678",

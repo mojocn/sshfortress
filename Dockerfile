@@ -24,9 +24,9 @@ RUN wget "https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz" && \
 
 WORKDIR "${GOPATH}/sshfortress"
 COPY . .
-RUN go build -o _build/app
+RUN go build -o _build/sshfortress
 
 #映射配置文件
 VOLUME /etc/sshfortress/config.toml
 
-CMD ["_build/app","sqlite"]
+CMD ["_build/sshfortress","sqlite"]
