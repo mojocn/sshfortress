@@ -104,8 +104,8 @@ func (m *User) Create() (err error) {
 
 //Delete
 func (m *User) Delete() (err error) {
-	if m.Id < 1 {
-		return errors.New("id必须大于0")
+	if m.Id < 2 {
+		return errors.New("id must be larger than 1")
 	}
 	return crudDelete(m)
 }
