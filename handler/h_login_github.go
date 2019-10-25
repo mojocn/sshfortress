@@ -3,7 +3,6 @@ package handler
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -23,7 +22,7 @@ func LoginGithub(c *gin.Context) {
 	}
 
 	user := model.User{}
-	data, err := user.LoginGithub(*gu.Email, gu.Login, gu.Name, gu.Bio, gu.AvatarURL, gu.Token)
+	data, err := user.LoginGithub(*gu.Email, gu.Login, gu.Name, gu.Bio, gu.AvatarURL, gu.Token, gu.ID)
 	if handleError(c, err) {
 		return
 	}
@@ -78,7 +77,7 @@ func fetchGithubUser(code string) (*githubUser, error) {
 		return nil, err
 	}
 	if res.StatusCode != 200 {
-		return nil, errors.New("using github token to fetch User Info failed with not 200 error")
+		return nil, fmt.Errorf("using github token to fetch User Info failed with %d error", res.StatusCode)
 	}
 	defer res.Body.Close()
 	bs, err = ioutil.ReadAll(res.Body)

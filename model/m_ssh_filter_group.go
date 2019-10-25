@@ -57,8 +57,8 @@ func (m *SshFilterGroup) Create() (err error) {
 
 //Delete
 func (m *SshFilterGroup) Delete() (err error) {
-	if m.Id < 1 {
-		return errors.New("id必须大于0")
+	if m.Id < 2 {
+		return errors.New("id must be larger than 2")
 	}
 	return crudDelete(m)
 }

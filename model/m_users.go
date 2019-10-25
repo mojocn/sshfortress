@@ -39,7 +39,7 @@ type User struct {
 	InputSshPassword string         `gorm:"-" json:"input_ssh_password,omitempty"`
 	Avatar           string         `gorm:"default:'//p1.ssl.qhimg.com/t01ff98c4a29f7a7db5.png'" json:"avatar"`
 	GithubToken      string         `json:"github_token"`
-	SshFilterGroupId uint           `gorm:"index" json:"ssh_filter_group_id" form:"ssh_filter_group_id"`
+	SshFilterGroupId uint           `gorm:"index,default:'1'" json:"ssh_filter_group_id" form:"ssh_filter_group_id"`
 	SshFilterGroup   SshFilterGroup `json:"ssh_filter_group"`
 }
 
@@ -167,12 +167,13 @@ func (m User) LoginLdap(email, userName, realName, memberOf string) (*jwtObj, er
 	return jwtGenerateToken(u)
 }
 
-func (m User) LoginGithub(email, userName, realName, memberOf, avatar, token string) (*jwtObj, error) {
+func (m User) LoginGithub(email, userName, realName, memberOf, avatar, token string, githubId int) (*jwtObj, error) {
 	ex := time.Now().Add(time.Hour * 24 * 3650)
 	pw := "123456"
 	u := &User{
 		Role:             4,
 		MemberOf:         memberOf,
+		Mobile:           fmt.Sprintf("%d", githubId),
 		Name:             userName,
 		RealName:         realName,
 		Email:            email,

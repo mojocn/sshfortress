@@ -30,7 +30,9 @@ func RunMigrate() error {
 	if err != nil {
 		logrus.WithError(err).Error("创建初始化用户失败")
 	}
-
+	row := SshFilterGroup{Name: "Admin", Remark: "Admin SSH Command Rules"}
+	row.Id = 1
+	db.Model(SshFilterGroup{}).FirstOrCreate(&row, 1)
 	migrateOrLoadConfig()
 	return nil
 }
