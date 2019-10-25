@@ -1,6 +1,6 @@
 package main
 
-import "sshfortress/cmd"
+import "github.com/mojocn/sshfortress/cmd"
 
 var buildTime, gitHash string
 
