@@ -4,9 +4,10 @@
 
 1. Make your cluster servers be more safe by expose your SSH connection through SSH-Fortress server
 2. Login your SSH server through the SSH-Fortress Web Interface and record all input and output history commands.
-2. Manage your cluster server's SSH Account by SSH-Fortress with Web Account
-3. Manage a server's files by SSH-Fortress's SFTP-web-interface
-4. Easily login into your private Cluster by SSH Proxy provided by SSH-Fortress-Proxy
+3. Manage your cluster server's SSH Account by SSH-Fortress with Web Account
+4. Sync your SSHfortress WebApp Account into your linux SSH Account
+5. Manage a server's files by SSH-Fortress's SFTP-web-interface.
+6. Easily login into your private Cluster by SSH Proxy provided by SSH-Fortress-Proxy
 
 
 ## 2. build and run

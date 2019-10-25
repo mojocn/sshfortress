@@ -108,6 +108,13 @@ func runApiAndH5() error {
 			authG.GET("cluster-ssh/:id", handler.ClusterSshOne)
 			authG.POST("cluster-ssh-bind", mwAdmin, handler.ClusterSshBindMachines)
 		}
+
+		{
+			// config table in SQL database
+			authG.GET("config", mwAdmin, handler.ConfigAll)
+			authG.PATCH("config", mwAdmin, handler.ConfigUpdate)
+		}
+
 		{
 			authG.GET("cluster-jumper", mwAdmin, handler.ClusterJumperAll)
 			authG.POST("cluster-jumper", mwAdmin, handler.ClusterJumperCreate)

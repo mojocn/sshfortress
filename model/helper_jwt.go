@@ -9,10 +9,6 @@ import (
 	"time"
 )
 
-var AppSecret = "J%df4e8hcjvbkjclkjkklfgki843895iojfdnvufh98"
-var AppIss = "sshfortress"
-var ExpireTime = time.Hour * 24 * 30
-
 func jwtGenerateToken(m *User) (*jwtObj, error) {
 	m.Password = ""
 	m.InputSshPassword = ""

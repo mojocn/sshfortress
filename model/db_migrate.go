@@ -2,7 +2,6 @@ package model
 
 import (
 	"github.com/sirupsen/logrus"
-	"sshfortress/util"
 	"time"
 )
 
@@ -31,8 +30,7 @@ func RunMigrate() error {
 	if err != nil {
 		logrus.WithError(err).Error("创建初始化用户失败")
 	}
-	//初始化 配置值 for jwt
-	AppSecret = configKeyDefault("app_secret", util.RandomDigitAndLetters(24))
-	AppIss = configKeyDefault("app_name", "ssh_fortress")
+
+	migrateOrLoadConfig()
 	return nil
 }

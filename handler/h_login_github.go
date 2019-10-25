@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"sshfortress/model"
@@ -46,7 +45,7 @@ func LoginGithub(c *gin.Context) {
 //fetchGithubUser 获取github 用户信息
 func fetchGithubUser(code string) (*githubUser, error) {
 	client := http.Client{}
-	params := fmt.Sprintf(`{"client_id":"%s","client_secret":"%s","code":"%s"}`, viper.Get("github.client_id"), viper.GetString("github.client_secret"), code)
+	params := fmt.Sprintf(`{"client_id":"%s","client_secret":"%s","code":"%s"}`, model.GithubClientId, model.GithubClientSecret, code)
 	req, err := http.NewRequest("POST", "https://github.com/login/oauth/access_token", bytes.NewBufferString(params))
 	if err != nil {
 		return nil, err
