@@ -15,9 +15,9 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		if isShowVersion {
-			fmt.Println("Golang Env: %s %s/%s", runtime.Version(), runtime.GOOS, runtime.GOARCH)
-			fmt.Println("UTC build time:%s", buildTime)
-			fmt.Println("Build from Github repo version:%s", gitHash)
+			fmt.Printf("Golang Env: %s %s/%s\n", runtime.Version(), runtime.GOOS, runtime.GOARCH)
+			fmt.Printf("UTC build time:%s\n", buildTime)
+			fmt.Printf("Build from Github repo version:%s\n", gitHash)
 		}
 	},
 }
