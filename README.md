@@ -1,4 +1,5 @@
 # SSH-Fortress
+go version > 1.12
 
 ## 1. What does it do?
 
