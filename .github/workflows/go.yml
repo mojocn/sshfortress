@@ -16,13 +16,17 @@ jobs:
         go-version: 1.13
       id: go
 
+    - name: Get current time
+      uses: gerred/actions/current-time@master
+      id: current-time
+
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
 
     - name: echo git hash
       run: echo ${{ github.sha }} > Release.txt
     - name: Build Golang Executorable Release
-      run: go build -ldflags "-s -w -X main.buildTime=$(shell date -u '+%Y-%m-%dT%I:%M:%S%p') -X main.gitHash=$(shell git rev-parse HEAD)" -o sshfortress_${{ matrix.platform }}.release
+      run: go build -ldflags "-s -w -X main.buildTime='${{ steps.current-time.outputs.time }}' -X main.gitHash=${{ github.sha }}" -o sshfortress_${{ matrix.platform }}.release
     - name: show build file
       run: ls -al
     - name: Release
