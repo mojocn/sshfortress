@@ -1,5 +1,6 @@
 # SSH-Fortress
 go version > 1.12
+windows10 needs GCC to run with SQLite(CGO) Database
 
 ## 1. What does it do?
 
@@ -11,7 +12,7 @@ go version > 1.12
 6. Easily login into your private Cluster by SSH Proxy provided by SSH-Fortress-Proxy
 
 
-## 2. build and run
+## 2. Build and run
 ```bash
 git clone https://github.com/mojocn/sshfortress.git && cd sshfortress;
 go build
@@ -24,7 +25,7 @@ echo "run the app with Mysql database, you need a config.toml file in your sshfo
 Docker pull `docker pull mojotvcn/sshfortress`
 
 ### 2.1 config.toml
-The config.toml file should in sshfortress binary folder.  config.toml works with command `sshfortress run`. Command `sshfortress sqlite` can run with the config file.
+The config.toml file should be in sshfortress binary folder.  config.toml works with command `sshfortress run`. Command `sshfortress sqlite` can run with the config file.
 
 ```toml
 [app]
@@ -46,11 +47,11 @@ The config.toml file should in sshfortress binary folder.  config.toml works wit
     client_secret="89b272eeb22f373d8aa688986a8dbbc4edbfc64a"
     callback_url="http://sshfortress.mojotv.cn/#/"
 ```
-## 3. Online demo
+## 3. Live demo
 
 [https://sshfortress.mojotv.cn/#/login](https://sshfortress.mojotv.cn/#/login)
 
-just click the login button, the default password has input for you, user `admin@sshfortress.cn` password: `admin`,
+Just click the login button, the default password has input for you, user `admin@sshfortress.cn` password: `admin`,
 
 ### 3.1 Universal Web SST Terminal
 
@@ -61,7 +62,7 @@ just click the login button, the default password has input for you, user `admin
 - URL-ARG  `z` : Not Use Zend Mode eg: `1`
 
 
-## 4. Run With supervisor & nginx
+## 4. Run with Supervisor & Nginx
 
 sshfortress.mojotv.cn.conf
 ```bash
@@ -117,6 +118,6 @@ stdout_logfile=/data/sshfortress/supervisor.log
 
 ## 5. Reference
 
-1. [idea from my another repo: libragen/felix](https://github.com/libragen/felix)
+1. [Idea from my another repo: libragen/felix](https://github.com/libragen/felix)
 2. [How to run SSH-Terminal in browser](https://mojotv.cn/2019/05/27/xtermjs-go)
 3. [Dockerhub image](https://hub.docker.com/r/mojotvcn/sshfortress/dockerfile)
