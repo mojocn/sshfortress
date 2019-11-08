@@ -24,13 +24,15 @@ jobs:
       uses: actions/checkout@v1
 
     - name: echo git hash
-      run: echo ${{ github.sha }} > Release.txt
+      run: echo "${{ github.sha }} \n\r ${{ steps.current-time.outputs.time }}" > Release.txt
     - name: Build Golang Executorable Release
-      run: go build -ldflags "-s -w -X main.buildTime='${{ steps.current-time.outputs.time }}' -X main.gitHash=${{ github.sha }}" -o sshfortress_${{ matrix.platform }}.release
+      run: go build -ldflags "-s -w -X main.buildTime=${{ steps.current-time.outputs.time }} -X main.gitHash=${{ github.sha }}" -o sshfortress_${{ matrix.platform }}.release
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: sshfortress_${{ matrix.platform }}.release
+        files: |
+          sshfortress_${{ matrix.platform }}.release
+          Release.txt
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
