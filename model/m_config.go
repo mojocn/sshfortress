@@ -36,7 +36,7 @@ func (m Config) All(q *PaginationQ) (list *[]Config, total uint, err error) {
 		tx = tx.Where("remark like ?", "%"+m.Remark+"%")
 	}
 	if m.Key != "" {
-		tx = tx.Where("key like ?", "%"+m.Key+"%")
+		tx = tx.Where("`key` like ?", "%"+m.Key+"%")
 	}
 
 	if m.Value != "" {
@@ -57,7 +57,7 @@ func (m *Config) Update() (err error) {
 
 func insertOrCreateConfigItem(key, def, remark string) string {
 	cfg := Config{Key: key}
-	if db.Where("key = ?", key).First(&cfg).RowsAffected != 1 {
+	if db.Where("`key` = ?", key).First(&cfg).RecordNotFound() {
 		cfg.Value = def
 		cfg.Remark = remark
 		if err := db.Create(&cfg).Error; err != nil {
