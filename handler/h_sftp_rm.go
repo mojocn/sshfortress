@@ -3,7 +3,10 @@ package handler
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
+
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/sftp"
 )
 
 func SftpRm(c *gin.Context) {
@@ -23,9 +26,7 @@ func SftpRm(c *gin.Context) {
 	logAction := ""
 	switch dirOrFile {
 	case "dir":
-		//sftp 删除非空文件夹错误
-		//todo:: 解决方案使用rm -rf 命令来删除
-		err = sftpClient.RemoveDirectory(fullPath)
+		err = RemoveNonemptyDirectory(sftpClient, fullPath)
 		if err != nil {
 			jsonError(c, fmt.Sprintf("can't delete none empty directory: %s", err))
 			return
@@ -46,4 +47,32 @@ func SftpRm(c *gin.Context) {
 	}
 	jsonSuccess(c)
 
+}
+
+// RemoveNonemptyDirectory removes the non empty directory in sftp server.
+// sftp protocol does not allows removing non empty directory.
+// we need to traverse over the file tree to remove files and directories post-orderly
+func RemoveNonemptyDirectory(c *sftp.Client, path string) error {
+	list, err := c.ReadDir(path)
+	if err != nil {
+		return err
+	}
+
+	// travarsal over the tree
+	for i := 0; i < len(list); i++ {
+		cur := list[i]
+		newPath := filepath.Join(path, list[i].Name())
+		if cur.IsDir() {
+			if err := RemoveNonemptyDirectory(c, newPath); err != nil {
+				return err
+			}
+		} else {
+			if err := c.Remove(newPath); err != nil {
+				return err
+			}
+		}
+	}
+
+	// remove current directory, which now is empty
+	return c.RemoveDirectory(path)
 }
